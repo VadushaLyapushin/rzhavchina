@@ -16,3 +16,28 @@
    Фотографии для тестирования модели лежат в папке TestModel/testImages.
 
 
+Лог действий из терминала:
+#клонируем репозиторий
+cd ../..
+md cloneRzhavchina
+git clone https://github.com/VadushaLyapushin/rzhavchina.git 
+cd rzhavchina
+
+#Далее открываем и выполняем первый проект, необходимый для преобразования изображений
+cd ImagePreparation\PreparationImages
+python main.py a b c 
+
+#Открываем и выполняем второй проект, необходимый для бучения нейронной сети
+cd ..
+cd .. 
+cd Training\trainingNeuralNetwork
+python main.py a b c 
+
+#Открываем и выполняем третий проект, необходимый для тестирования модели
+cd ..
+cd .. 
+cd TestModel\testModel
+python main.py a b c 
+
+
+

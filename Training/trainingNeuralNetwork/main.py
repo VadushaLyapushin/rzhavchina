@@ -74,7 +74,7 @@ print ("End")
 
 
 
-NUM_EPOCHS = 70 # задаём количество эпох обучение
+NUM_EPOCHS = 30 # задаём количество эпох обучение
 BS = 32 # задаём размер мини-батча
 
 opt = tf.keras.optimizers.Adam(

@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 '''
 
 # загружаем обученную модель
-model = load_model("C:\\Users\\Admin\\Downloads\\Best_Sign.h5")
+model = load_model("C:\\Users\\Admin\\Desktop\\Best_Sign.h5")
 
 # загружаем изображения для теста обученной модели из репозитория TestModel/testImages
 ImagePaths = list(paths.list_images("C:\\cloneRzhavchina\\rzhavchina\\TestModel\\testImages"))
