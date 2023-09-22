@@ -27,7 +27,7 @@ with open("C:\\Users\\Admin\\Desktop\\labels.pickle", 'rb') as f:
   labels = pickle.load(f)
 print("Labels loaded")
 
-# разбиваем набор данных на тренировочную и валидационную выборку
+# разбиваем набор данных на тренировочную и валидационную выборку (указываем размер тестовой выборки)
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.2, random_state=32)
 
 # строим модель
@@ -74,8 +74,8 @@ print ("End")
 
 
 
-NUM_EPOCHS = 1 # задаём количество эпох обучение
-BS = 32 # размер мини-батча
+NUM_EPOCHS = 70 # задаём количество эпох обучение
+BS = 32 # задаём размер мини-батча
 
 opt = tf.keras.optimizers.Adam(
     learning_rate = 1e-3,
@@ -88,6 +88,7 @@ opt = tf.keras.optimizers.Adam(
 model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 model.summary()
 
+# функция трансформирует изображения в процессе обучения (необходима, так как небольшой набор данных)
 aug = ImageDataGenerator(
 	rotation_range=5,
 	zoom_range=0.05,
@@ -104,7 +105,7 @@ print(classTotals)
 classWeight = classTotals.max() / classTotals
 print(classWeight/1)
 
-
+# указываем путь куда будет сохраняться модель
 checkpointer = ModelCheckpoint(filepath='C:\\Users\\Admin\\Desktop\\Best_Sign.h5', verbose=1, save_best_only=True)
 
 H = model.fit(aug.flow(trainX, trainY, batch_size=BS),
@@ -112,17 +113,18 @@ H = model.fit(aug.flow(trainX, trainY, batch_size=BS),
 						steps_per_epoch=trainX.shape[0] // BS,
 						epochs=NUM_EPOCHS,
                         shuffle=True,
-                        class_weight={0: classWeight[0],
-                                      1: classWeight[1],
+                        class_weight={0: classWeight[0], # если классифицируем более 3 классов, добавляем данные в словарь
+                                      1: classWeight[1], # например для 4 классов необходимо добавить 3: classWeight[3]
                                       2: classWeight[2]},
                         callbacks=[checkpointer])
 
 predictions = model.predict(testX, batch_size = 16)
-print(predictions)
+
+# выводим отчёт для оценки обучения модели (просматриваем результат валидационный выборки)
 print(classification_report(testY.argmax(axis=1),
                             predictions.argmax(axis=1), target_names=("without", "surface", "deep")))
 
-
+# график для оценки точности
 N = np.arange(0, NUM_EPOCHS)
 plt.style.use("ggplot")
 plt.figure()
@@ -132,9 +134,10 @@ plt.title("Results")
 plt.xlabel("Epoch #")
 plt.ylabel("Accuracy")
 plt.legend()
-plt.savefig("C:\\Users\\Admin\\Desktop\\Accuracy.png")
+plt.savefig("C:\\Users\\Admin\\Desktop\\Accuracy.png") # указываем путь куда сохранить график
 print("End")
 
+# график для оценки ошибки
 plt.style.use("ggplot")
 plt.figure()
 plt.plot(N, H.history["loss"], label="train_loss")
@@ -143,5 +146,5 @@ plt.title("Results")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig("C:\\Users\\Admin\\Desktop\\Loss.png")
+plt.savefig("C:\\Users\\Admin\\Desktop\\Loss.png") # указываем путь куда сохранить график
 print("End")
